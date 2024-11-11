@@ -32,17 +32,17 @@ pub mod ltv_tests {
         let (erc20_6, _) = *arr[0];
         let (erc20_18, _) = *arr[1];
 
-        let value_10e6 = 1000000;
-        let value_10e12 = 1000000000000;
-        let value_10e18 = 1000000000000000000;
-        let value_10e18_plus_12 = 1000000000000000000000000000000;
+        let value_1e6 = 1000000;
+        let value_1e12 = 1000000000000;
+        let value_1e18 = 1000000000000000000;
+        let value_1e18_plus_12 = 1000000000000000000000000000000;
         let ltv = constants::LTV_SCALE;
 
-        assert_eq!(aux_compute_value_of_asset(value_10e6, erc20_6, value_10e18_plus_12, ltv), value_10e18);
-        assert_eq!(aux_compute_value_of_asset(value_10e18, erc20_18, value_10e18, ltv), value_10e18);
-        assert_eq!(aux_compute_value_of_asset(1, erc20_18, value_10e18, ltv), 1);
+        assert_eq!(aux_compute_value_of_asset(value_1e6, erc20_6, value_1e18_plus_12, ltv), value_1e18);
+        assert_eq!(aux_compute_value_of_asset(value_1e18, erc20_18, value_1e18, ltv), value_1e18);
+        assert_eq!(aux_compute_value_of_asset(1, erc20_18, value_1e18, ltv), 1);
 
-        assert_eq!(aux_compute_value_of_asset(amount.into(), erc20_6, value_10e18_plus_12, ltv), amount.into() * value_10e12);
-        assert_eq!(aux_compute_value_of_asset(amount.into(), erc20_18, value_10e18, ltv), amount.into());
+        assert_eq!(aux_compute_value_of_asset(amount.into(), erc20_6, value_1e18_plus_12, ltv), amount.into() * value_1e12);
+        assert_eq!(aux_compute_value_of_asset(amount.into(), erc20_18, value_1e18, ltv), amount.into());
     }
 }

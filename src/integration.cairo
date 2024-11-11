@@ -19,8 +19,8 @@ pub fn aux_compute_value_of_asset(amount: u256, asset: IERC20Dispatcher, price_o
     let value = value * price_of_asset; // price_of_assets it scaled to 10**18, that's why we divide 3 lines later by 10**18
     let value = value * ltv / constants::LTV_SCALE;
     let value = value;
-    let value_10e18 = 1000000000000000000;
-    value / value_10e18
+    let value_1e18 = 1000000000000000000;
+    value / value_1e18
 }
 
 pub fn category_id_from_address(_address: ContractAddress) -> felt252 {
@@ -28,20 +28,16 @@ pub fn category_id_from_address(_address: ContractAddress) -> felt252 {
     // Regular assets
     if address == constants::ETH_ADDRESS {
         return constants::ETH_CATEGORY;
-    } else if address == constants::USDC_ADDRESS || address == constants::DAI_ADDRESS || address == constants::DAIV0_ADDRESS {
+    } else if address == constants::USDT_ADDRESS || address == constants::USDC_ADDRESS || address == constants::DAI_ADDRESS || address == constants::DAIV0_ADDRESS {
         return constants::USDC_CATEGORY;
     } else if address == constants::STRK_ADDRESS {
         return constants::STRK_CATEGORY;
     }
     // Nimbora assets
     // Pendle eth
-    // else if address == constants::NIMBORA_npeETH_ADDRESS || address == constants::NIMBORA_nppETH_ADDRESS {
-    //     return constants::ETH_CATEGORY;
-    // }
-    // Pendle usdc
-    // else if address == constants::NIMBORA_npaUSDT_ADDRESS || address == constants::NIMBORA_npfUSDC_ADDRESS  {
-    //     return constants::USDC_CATEGORY;
-    // }
+    else if address == constants::NIMBORA_npeETH_ADDRESS {
+        return constants::ETH_CATEGORY;
+    }
     // Wrappers around dai and usda
     else if address == constants::NIMBORA_nsDAI_ADDRESS || address == constants::NIMBORA_nstUSD_ADDRESS {
         return constants::USDC_CATEGORY;

@@ -81,6 +81,7 @@ pub mod MyCode {
     use mycode::utilities::{ assert_is_admin, assert_is_lending_asset, assert_offer_can_be_repay, assert_validity_of_price };
     use mycode::utilities::{ interest_to_repay, max_to_repay, max2, min2, min2_256, min3, scale_to_18_decimals, inverse_scale_to_18_decimals };
     use mycode::integration::{ aux_compute_value_of_asset, category_id_from_address, liquidate_collateral };
+    use mycode::constants::{ STRK_CATEGORY };
     // Starknet
     use starknet::{ ContractAddress, ClassHash };
     use starknet::storage::{ Vec, VecTrait, MutableVecTrait };
@@ -378,7 +379,12 @@ pub mod MyCode {
             erc20.transferFrom(get_caller_address(), get_contract_address(), inverse_scale_to_18_decimals(lend_token, fee));
 
             // Points - add to lender and borrower the amount of fee paid
-            let multiplier = self.points_multiplier.read();
+            let mut multiplier = self.points_multiplier.read();
+            // Strk price is .5$, so we divide the multiplier by 2 compared to the usdc market where assets have a price of 1$
+            // Todo, do it for eth too when eth market is opened - and rework that section at that time
+            if (category_id_from_address(lend_token) == STRK_CATEGORY) {
+                multiplier = multiplier / 2;
+            }
             self.total_points.write(self.total_points.read() + 2 * fee * multiplier);
             self.user_points.entry(lender).write(self.user_points.entry(lender).read() + fee * multiplier);
             self.user_points.entry(borrower).write(self.user_points.entry(borrower).read() + fee * multiplier);
@@ -553,13 +559,13 @@ pub mod MyCode {
             let (all_borrow, all_lend) = self.frontend_get_all_offers(category);
             let mut max_yield_borrow = constants::MIN_APR;
             for borrow_offer in all_borrow {
-                if *borrow_offer.price.rate > max_yield_borrow && *borrow_offer.amount_available >= constants::VALUE_10e18 {
+                if *borrow_offer.price.rate > max_yield_borrow && *borrow_offer.amount_available >= constants::VALUE_1e18 {
                     max_yield_borrow = *borrow_offer.price.rate;
                 }
             };
             let mut max_yield_lend = constants::MAX_APR;
             for lend_offer in all_lend {
-                if *lend_offer.price.rate < max_yield_lend && *lend_offer.amount_available >= constants::VALUE_10e18 {
+                if *lend_offer.price.rate < max_yield_lend && *lend_offer.amount_available >= constants::VALUE_1e18 {
                     max_yield_lend = *lend_offer.price.rate;
                 }
             };
